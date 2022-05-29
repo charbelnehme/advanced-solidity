@@ -15,24 +15,17 @@ KaseiCoin will be a fungible token that’s ERC-20 compliant. You’ll launch a 
 ### Step 2: Create the KaseiCoin Crowdsale Contract
 
 
-
-
+![crowdsale_contract](https://user-images.githubusercontent.com/95597283/170859454-fd42db5b-9028-416c-b708-be4c6630616f.png)
 
 
 ### Step 3: Create the KaseiCoin Deployer Contract
 
-
-
-
-
+![deployer_contract](https://user-images.githubusercontent.com/95597283/170859455-a728df37-2d25-4b7e-b696-60dffb77cc34.png)
 
 ### Step 4: Extend the Crowdsale Contract by Using OpenZeppelin
-
-
 
 ### Capped Crowdsale 
 
 ![capped](https://user-images.githubusercontent.com/95597283/170858658-295a5f12-a6b3-4d31-833d-bf3e695d11ec.png)
-
 
 ![capped_crowdsale](https://user-images.githubusercontent.com/95597283/170858891-a6123afc-e488-4dfd-9f76-80e434ecd3d7.png)
