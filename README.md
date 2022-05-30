@@ -60,43 +60,16 @@ contract KaseiCoinCrowdsale is Crowdsale, MintedCrowdsale, CappedCrowdsale {
 
 ```ruby
 contract KaseiCoinCrowdsaleDeployer is Crowdsale, MintedCrowdsale, CappedCrowdsale {
-    address public kc_token_address;
-    address public kc_crowdsale_address; 
-    uint256 public investorMinCap = 1000000000;
-    uint256 public investorHardCap = 1000000000000000;
-    mapping(address => uint256) public contributions;
-
-    constructor(
-        string memory name,
-        string memory symbol, 
-        address payable wallet,
-        uint256 rate, 
-        KaseiCoin token, 
-        uint256 cap
-    )
-
+    
+    ....
+    
     MintedCrowdsale()
     Crowdsale(rate, wallet, token)
     CappedCrowdsale(cap)
 
     public
     {
-        // Create a mintable token 
-        KaseiCoin token = new KaseiCoin(name, symbol, 0);
-        kc_token_address = address(token);
-
-        // Create the crowdsale and tell it about the token
-        KaseiCoinCrowdsale crowdsale = new KaseiCoinCrowdsale(1, wallet, token, cap);
-
-        // Send tokens to the deployer
-        kc_crowdsale_address = address(kc_token_address);
-
-        // Transfer the minter role from this contract to the crowdsale 
-        token.addMinter(kc_crowdsale_address); 
-        token.renounceMinter(); 
-
-        // Approve tokens for crowdsale
-        KaseiCoin(kc_token_address).approve(kc_crowdsale_address, 100000);
+       
     }
 ```
 ![deployer_contract](https://user-images.githubusercontent.com/95597283/170859455-a728df37-2d25-4b7e-b696-60dffb77cc34.png)
@@ -114,5 +87,4 @@ The KaseiCoin crowdsale contract was modified to limit the number of tokens avai
 ```ruby 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 ```
-
-
+![crowdsale_capped](https://user-images.githubusercontent.com/95597283/170985365-c816519d-6169-462f-8921-812df5e517b8.png)
