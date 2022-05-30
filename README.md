@@ -17,11 +17,7 @@ ERC20 was used for the basic standard implementation. An 'initialSupply' of Kase
 
 ```ruby 
 contract KC_Token is ERC20, ERC20Detailed, ERC20Mintable {
-    constructor(
-        string memory name,
-        string memory symbol,
-        uint initial_supply
-    )
+    constructor()
         ERC20Detailed("KC_Token", "KCC", 18)
         public
     {
