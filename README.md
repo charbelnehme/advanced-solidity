@@ -105,43 +105,14 @@ contract KaseiCoinCrowdsaleDeployer is Crowdsale, MintedCrowdsale, CappedCrowdsa
 
 The external interface for crowdsale contracts represents the basic interface for purchasing tokens, and conforms the base architecture for crowdsales. It is not intended to be modified / overridden. The internal interface conforms the extensible and modifiable surface of crowdsales. 
 
-The KaseiCoin crowdsale contract was modified to limit the number of tokens available to investors. The modifications to the crowdsale contract are discussed below. 
+The modifications to the crowdsale contract are discussed below. 
 
-#### Capped Crowdsale 
+### ERC20Capped
 
-```
-> Events
+The KaseiCoin crowdsale contract was modified to limit the number of tokens available to investors. The extension that adds a cap to the supply of KaseiCoin tokens is below.
 
-TokensPurchased(purchased, beneficiary, value, amount)
-
-> Constructor
-
-constructor(uint256 cap)
-
-The 'capped crowdsale' constructor takes the maximum amount of wei accepted in the sale. 
-
-_preValidatePurchase(address beneficiary, uint256 weiAmount)
-
-Extend parent behaviour requiring purchase to respect the funding cap.
-
-![crowdsale_capped](https://user-images.githubusercontent.com/95597283/170975766-5bfcd1f2-64ac-4259-a7a5-541c34594438.png)
-
+```ruby 
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 ```
 
-![capped](https://user-images.githubusercontent.com/95597283/170858658-295a5f12-a6b3-4d31-833d-bf3e695d11ec.png)
 
-```ruby
-    function preValidatePurchase(
-        address beneficiary,
-        uint256 weiAmount
-    )
-
-    internal{
-        super._preValidatePurchase(beneficiary, weiAmount);
-        uint256 existingContribution = contributions[beneficiary];
-        uint256 newContribution = existingContribution.add(weiAmount);
-        require(newContribution >= investorMinCap && newContribution <= investorHardCap);
-        contributions[beneficiary] = newContribution;     
-        }
-}
-```
