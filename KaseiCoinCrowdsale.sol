@@ -5,104 +5,78 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/crowdsale/emission/MintedCrowdsale.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/crowdsale/emission/AllowanceCrowdsale.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/crowdsale/validation/CappedCrowdsale.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/crowdsale/validation/TimedCrowdsale.sol";
 
 // Crowdsale token contract 
-contract KC_TokenCrowdsale is Crowdsale, MintedCrowdsale { 
+contract KaseiCoinCrowdsale is Crowdsale, MintedCrowdsale, CappedCrowdsale { 
     constructor(
         uint256 rate, 
         address payable wallet,
-        KC_Token token
+        KaseiCoin token,
+        uint256 cap
     )
 
     MintedCrowdsale()
     Crowdsale(rate, wallet, token)
+    CappedCrowdsale(cap)
+
     public
     {
-        //. Leave empty
+        // Leave empty
     }
 
 }
 
 // Crowdsale deployer contract
-contract KC_TokenCrowdsaleDeployer {
+contract KaseiCoinCrowdsaleDeployer is Crowdsale, MintedCrowdsale, CappedCrowdsale {
     address public kc_token_address;
     address public kc_crowdsale_address; 
+    uint256 public investorMinCap = 1000000000;
+    uint256 public investorHardCap = 1000000000000000;
+    mapping(address => uint256) public contributions;
 
     constructor(
         string memory name,
         string memory symbol, 
-        address payable wallet
+        address payable wallet,
+        uint256 rate, 
+        KaseiCoin token, 
+        uint256 cap
     )
+
+    MintedCrowdsale()
+    Crowdsale(rate, wallet, token)
+    CappedCrowdsale(cap)
+
     public
     {
         // Create a mintable token 
-        KC_Token token = new KC_Token(name, symbol, 0);
+        KaseiCoin token = new KaseiCoin(name, symbol, 0);
         kc_token_address = address(token);
 
-        // Create the crowdsale and tell it about the token 
-        KC_TokenCrowdsale crowdsale = new KC_TokenCrowdsale(
-            1,          // Rate
-            wallet, // Send KC tokens to the deployer 
-            token       // KaseiCoin token
-        );
+        // Create the crowdsale and tell it about the token
+        KaseiCoinCrowdsale crowdsale = new KaseiCoinCrowdsale(1, wallet, token, cap);
+
+        // Send tokens to the deployer
         kc_crowdsale_address = address(kc_token_address);
 
         // Transfer the minter role from this contract to the crowdsale 
         token.addMinter(kc_crowdsale_address); 
         token.renounceMinter(); 
 
+        // Approve tokens for crowdsale
+        KaseiCoin(kc_token_address).approve(kc_crowdsale_address, 100000);
     }
-}
 
-// Allowance contract
-contract KC_TokenAllowance is Crowdsale, AllowanceCrowdsale {
-    address public token_address;
-    address public crowdsale_address; 
-
-    constructor(
-        uint256 rate,
-        address payable wallet,
-        KC_Token token,
-        address KC_TokenWallet  
-    )
-        AllowanceCrowdsale(KC_TokenWallet)  
-        Crowdsale(rate, wallet, token)
-        public
-    {
-         KC_Token(token_address).approve(crowdsale_address, 100000);  // Approve tokens for crowdsale
-    }
-}
-
-// Capped crowdsale 
-contract KC_TokenCrowdsaleCapped is Crowdsale, MintedCrowdsale, CappedCrowdsale{
-	uint256 public investorMinCap = 10000000000000;
-	uint256 public investorHardCap = 10000000000000000000;
-	mapping(address => uint256) public contributions;
-
-	constructor(
-        uint256 rate,
-	    address payable wallet,
-	    KC_Token token,
-	    uint256 cap
-    )
-        Crowdsale(rate, wallet, token)
-	    CappedCrowdsale(cap)
-	    public
-    {
-        //. Leave empty
-	}
-    
     function preValidatePurchase(
         address beneficiary,
         uint256 weiAmount
     )
-    
+
     internal{
         super._preValidatePurchase(beneficiary, weiAmount);
         uint256 existingContribution = contributions[beneficiary];
         uint256 newContribution = existingContribution.add(weiAmount);
         require(newContribution >= investorMinCap && newContribution <= investorHardCap);
-	    contributions[beneficiary] = newContribution;     
+        contributions[beneficiary] = newContribution;     
         }
 }
