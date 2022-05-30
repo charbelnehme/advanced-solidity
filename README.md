@@ -13,6 +13,8 @@ Crowdsale is a base contract for managing a token crowdsale, allowing investors 
 
 ### Step 1: Create the KaseiCoin Token Contract
 
+ERC20 was used for the basic standard implementation. An 'initialSupply' of KaseiCoin tokens was assigned to the address that deploys the KaseiCoin contract. 
+
 ```ruby 
 contract KC_Token is ERC20, ERC20Detailed, ERC20Mintable {
     constructor(
@@ -23,13 +25,12 @@ contract KC_Token is ERC20, ERC20Detailed, ERC20Mintable {
         ERC20Detailed("KC_Token", "KCC", 18)
         public
     {
-        mint(msg.sender, initial_supply);
+        _mint(msg.sender, 1000000);    
     }
 }
 ```
 
 ![kc_token_deployed](https://user-images.githubusercontent.com/95597283/170858899-e428e801-0047-4949-aa00-90fddf35f2fd.png)
-
 
 ### Step 2: Create the KaseiCoin Crowdsale Contract
 
