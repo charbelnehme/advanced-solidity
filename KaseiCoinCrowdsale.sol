@@ -11,7 +11,7 @@ contract KaseiCoinCrowdsale is Crowdsale, MintedCrowdsale, CappedCrowdsale {
     constructor(
         uint256 rate, 
         address payable wallet,
-        KaseiCoin token,
+        KC_Token token,
         uint256 cap
     )
 
@@ -21,7 +21,7 @@ contract KaseiCoinCrowdsale is Crowdsale, MintedCrowdsale, CappedCrowdsale {
 
     public
     {
-        // Leave empty
+        // Empty
     }
 
 }
@@ -39,7 +39,7 @@ contract KaseiCoinCrowdsaleDeployer is Crowdsale, MintedCrowdsale, CappedCrowdsa
         string memory symbol, 
         address payable wallet,
         uint256 rate, 
-        KaseiCoin token, 
+        KC_Token token, 
         uint256 cap
     )
 
@@ -50,21 +50,17 @@ contract KaseiCoinCrowdsaleDeployer is Crowdsale, MintedCrowdsale, CappedCrowdsa
     public
     {
         // Create a mintable token 
-        KaseiCoin token = new KaseiCoin(name, symbol, 0);
+        KC_Token token = new KC_Token(name, symbol, 0);
         kc_token_address = address(token);
 
         // Create the crowdsale and tell it about the token
         KaseiCoinCrowdsale crowdsale = new KaseiCoinCrowdsale(1, wallet, token, cap);
-
         // Send tokens to the deployer
         kc_crowdsale_address = address(kc_token_address);
 
         // Transfer the minter role from this contract to the crowdsale 
         token.addMinter(kc_crowdsale_address); 
         token.renounceMinter(); 
-
-        // Approve tokens for crowdsale
-        KaseiCoin(kc_token_address).approve(kc_crowdsale_address, 100000);
     }
 
     function preValidatePurchase(
